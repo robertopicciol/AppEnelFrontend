@@ -100,15 +100,15 @@ private val listlink =  functionalComponent<ListLinkProps> { props ->
 
 private val itemlink =  functionalComponent<ItemLinkProps> { props ->
     li ("nav-item") {
-        if (props.itemRoute.activeAR) {
-            routeLink("${props.url}/${props.itemRoute.urlAR}", className = "nav-link") {
-                i(props.itemRoute.classesLinkAR) {}
-                span { +props.itemRoute.descriptionLinkAR }
+        if (props.itemRoute.active) {
+            routeLink("${props.url}/${props.itemRoute.url}", className = "nav-link") {
+                i(props.itemRoute.classesLink) {}
+                span { +props.itemRoute.descriptionLink }
             }
         } else {
-            routeLink("${props.url}/${props.itemRoute.urlAR}", className = "nav-link") {
-                i(props.itemRoute.classesLinkAR) {}
-                span { +props.itemRoute.descriptionLinkAR }
+            routeLink("${props.url}/${props.itemRoute.url}", className = "nav-link") {
+                i(props.itemRoute.classesLink) {}
+                span { +props.itemRoute.descriptionLink }
             }
         }
 

@@ -1,6 +1,11 @@
 package apps.appLogin.model
 
-data class UserLogin(@JsName("usernameUL") val usernameUL : String,
-                     @JsName("useremailUL") val useremailUL : String,
-                     @JsName("userpasswordUL") val userpasswordUL : String) {
+data class UserLogin(val username : String,
+                     val email : String,
+                     val password : String) {
+
+    fun getJson() : String = JSON.stringify(this)
 }
+
+
+

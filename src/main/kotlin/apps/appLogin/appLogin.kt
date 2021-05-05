@@ -77,18 +77,16 @@ override var headers: dynamic = json("Content-Type" to "application/json","Autho
 
 suspend fun fetchToken(user : UserLogin) : RespondItemBo<TokenBo> {
     try {
-        console.log("aaa " + JSON.stringify(user))
+        console.log("aaa " + user.getJson())
         val response  = window.fetch(UrlRestApi.urlToken, object: RequestInit {
             override var method: String? = "POST"
-            override var body: dynamic = JSON.stringify(user)
+            override var body: dynamic = user.getJson()//JSON.stringify(user)
             override var credentials = "same-origin".asDynamic()
             override var headers: dynamic = json("Content-Type" to "application/json") //json("Accept" to "application/json","Content-Type" to "application/json")
         }).await()
-        /* .json()
-      .await()
-      .unsafeCast<String>()*/
+
         val token = response.json().await().unsafeCast<RespondItemBo<TokenBo>>()
-        return if (response.ok) token else RespondItemBo("KO", response.statusText, TokenBo.newEmptyToken())
+        return  if (response.ok) token else RespondItemBo("KO", response.statusText, TokenBo.newEmptyToken())
     } catch(e:Throwable){
         console.log(e.message.toString())
         return RespondItemBo("KO", "SERVER PROBLEMS", TokenBo.newEmptyToken())
@@ -123,13 +121,13 @@ private val appLogin =  functionalComponent<RProps> {
                 try {
                     val resptoken = fetchToken(UserLogin(loginusername, loginemail, loginpassword))
                     setAwaitLogin(false)
-                    console.log("AAAAA result " + resptoken.resultRI)
-                    if (resptoken.resultRI == "KO") {
-                        setLoginErrorInput(resptoken.messageRI)
+                    console.log("AAAAA result " + resptoken.result)
+                    if (resptoken.result == "KO") {
+                        setLoginErrorInput(resptoken.message)
                     } else {
-                        token.setToken(resptoken.itemRI)
+                        token.setToken(resptoken.item)
 
-                        if (token.tokenT != null) {
+                        if (token.token != null) {
                             history.push( "/appEnel/apps")
                         } else {
                             setLoginErrorInput("TOKEN IS NULL")

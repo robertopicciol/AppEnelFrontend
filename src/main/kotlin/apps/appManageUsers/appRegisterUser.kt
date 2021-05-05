@@ -212,16 +212,16 @@ private val appRegisterUser =  functionalComponent<RProps> {
                                 +"Register Account"
                             }
                             hr{}
-                            if (regMessageInput.respresult != "") {
-                                if (regMessageInput.respresult == "KO") {
+                            if (regMessageInput.result != "") {
+                                if (regMessageInput.result == "KO") {
                                     div(classes = "alert alert-danger") {
                                         attrs.role = "alert"
-                                        +regMessageInput.respmessage
+                                        +regMessageInput.message
                                     }
                                 } else {
                                     div(classes = "alert alert-success") {
                                         attrs.role = "alert"
-                                        +regMessageInput.respmessage
+                                        +regMessageInput.message
                                     }
                                 }
                             }

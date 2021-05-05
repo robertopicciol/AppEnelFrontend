@@ -19,6 +19,7 @@ object RouterApp {
        AppRoute("appUsers", "appUsers","Users", "fas fa-tachometer-alt", "Users", false),
        AppRoute("appSqlScriptOracle", "appSqlScriptOracle","Oracle Script", "fas fa-user", "Oracle Call Procedure", false),
        AppRoute("appConfigSqlScriptOracle", "appConfigSqlScriptOracle","Config Oracle Script", "fas fa-user", "Config Oracle Call Procedure", false),
+       AppRoute("appAnalisiTisDp", "appAnalisiTisDp","Analisi Tis DP", "fas fa-user", "Analisi Tis Dp", false)
    )
 }
 
@@ -79,11 +80,11 @@ private val mainRouter = functionalComponent<MainRouterProps> { props ->
                 }
                 route("/appEnel/apps") {
                     console.log("BBBBBBB " )
-                    if (token.tokenT != null) runEnelApps { routerApp = props.routers; title = "MAIN" } else redirect(to = "/appEnel/login")
+                    if (token.token != null) runEnelApps { routerApp = props.routers; title = "MAIN" } else redirect(to = "/appEnel/login")
                 }
                 route("/appEnel/*") {
                     console.log("AAAAA ")
-                    if (token.tokenT != null) redirect(to = "/appEnel/apps") else redirect(to = "/appEnel/login")
+                    if (token.token != null) redirect(to = "/appEnel/apps") else redirect(to = "/appEnel/login")
 
                 }
                 route("/*") {
