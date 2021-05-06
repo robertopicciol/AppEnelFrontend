@@ -19,7 +19,7 @@ external interface AppAnalisiTisDpProps : RProps {
     var title: String
 }
 
-fun RBuilder.appTableUsers(handler: AppAnalisiTisDpProps.() -> Unit) = child(appAnalisiTisDp) {
+fun RBuilder.appAnalisiTisDp(handler: AppAnalisiTisDpProps.() -> Unit) = child(appAnalisiTisDp) {
     attrs {
         handler()
     }

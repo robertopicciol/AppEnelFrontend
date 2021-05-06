@@ -13,8 +13,8 @@ import kotlinx.dom.addClass
 import kotlinx.html.*
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onSubmitFunction
-import model.RespondItemBo
-import model.TokenBo
+import model.RespondItem
+import model.Token
 import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
@@ -75,8 +75,8 @@ override var headers: dynamic = json("Content-Type" to "application/json","Autho
  */
 
 
-suspend fun fetchToken(user : UserLogin) : RespondItemBo<TokenBo> {
-    try {
+suspend fun fetchToken(user : UserLogin) : RespondItem<Token> {
+    return try {
         console.log("aaa " + user.getJson())
         val response  = window.fetch(UrlRestApi.urlToken, object: RequestInit {
             override var method: String? = "POST"
@@ -85,11 +85,11 @@ suspend fun fetchToken(user : UserLogin) : RespondItemBo<TokenBo> {
             override var headers: dynamic = json("Content-Type" to "application/json") //json("Accept" to "application/json","Content-Type" to "application/json")
         }).await()
 
-        val token = response.json().await().unsafeCast<RespondItemBo<TokenBo>>()
-        return  if (response.ok) token else RespondItemBo("KO", response.statusText, TokenBo.newEmptyToken())
+        val token = response.json().await().unsafeCast<RespondItem<Token>>()
+        if (response.ok) token else RespondItem("KO", response.statusText, Token.newEmptyToken())
     } catch(e:Throwable){
         console.log(e.message.toString())
-        return RespondItemBo("KO", "SERVER PROBLEMS", TokenBo.newEmptyToken())
+        RespondItem("KO", "SERVER PROBLEMS", Token.newEmptyToken())
     }
 
 }

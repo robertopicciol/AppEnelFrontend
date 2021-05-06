@@ -12,7 +12,7 @@ import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onSubmitFunction
 import kotlinx.html.role
 import apps.appManageUsers.model.UserRegister
-import model.RespondBo
+import model.Respond
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import org.w3c.fetch.RequestInit
@@ -21,7 +21,7 @@ import react.dom.*
 import kotlin.js.json
 
 
-suspend fun saveUser(user : UserRegister) : RespondBo {
+suspend fun saveUser(user : UserRegister) : Respond {
     try {
         console.log("REGISTER " + JSON.stringify(user))
         val response  = window.fetch(UrlRestApi.urlRegister, object: RequestInit {
@@ -33,20 +33,28 @@ suspend fun saveUser(user : UserRegister) : RespondBo {
         /* .json()
          .await()
          .unsafeCast<String>()*/
-        val resp = response.json().await().unsafeCast<RespondBo>()
-        return if (response.ok) resp else RespondBo("KO",response.statusText)
+        val resp = response.json().await().unsafeCast<Respond>()
+        return if (response.ok) resp else Respond("KO",response.statusText)
     } catch(e:Throwable){
         console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        return RespondBo("KO",e.message ?: "Exception")
+        return Respond("KO",e.message ?: "Exception")
     }
 
 
 }
 
-fun RBuilder.appRegisterUser() = child(appRegisterUser) {
+external interface AppRegisterUserProps : RProps {
+    var title: String
 }
 
-private val appRegisterUser =  functionalComponent<RProps> {
+fun RBuilder.appRegisterUser(handler: AppRegisterUserProps.() -> Unit) = child(appRegisterUser) {
+    attrs {
+        handler()
+    }
+}
+
+
+private val appRegisterUser =  functionalComponent<AppRegisterUserProps> {
     val (regfirstname, setRegFirstname) = useState("")
     val (reglastname, setRegLastname) = useState("")
     val (regusername, setRegUsername) = useState("")
@@ -54,25 +62,25 @@ private val appRegisterUser =  functionalComponent<RProps> {
     val (regpassword, setRegPassword) = useState("")
     val (regpassword_retype,setRegPassword_retype)= useState("")
     val (regRoles,setRegRoles) = useState( mapOf("ADMIN" to true, "USER" to false))
-    val (regMessageInput, setRegMessageInput) = useState(RespondBo.emptyRespond())
+    val (regMessageInput, setRegMessageInput) = useState(Respond.emptyRespond())
 
     val submitRegister = { event : Event ->
         event.preventDefault()
         if ((regusername == "" && regemail == "" ) || regpassword == "" || reglastname == "" || regfirstname == "") {
-            setRegMessageInput(RespondBo("KO","The fileds must be not null"))
+            setRegMessageInput(Respond("KO","The fileds must be not null"))
         } else {
             if (regpassword_retype != regpassword){
-                setRegMessageInput(RespondBo("KO","Passwords are not the same."))
+                setRegMessageInput(Respond("KO","Passwords are not the same."))
             } else {
                 val user = UserRegister(regfirstname,reglastname,regusername,regemail,regpassword,regRoles.filterValues{ it }.keys)
                 console.log("USER: $user")
-                setRegMessageInput(RespondBo.emptyRespond())
+                setRegMessageInput(Respond.emptyRespond())
                 val mainScope = MainScope()
                 mainScope.launch {
                     try {
                         setRegMessageInput(saveUser(user))
                     } catch (e: Throwable) {
-                        setRegMessageInput(RespondBo("KO", e.message.toString()))
+                        setRegMessageInput(Respond("KO", e.message.toString()))
                     }
                 }
                 Unit

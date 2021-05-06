@@ -19,7 +19,7 @@ external interface AppAllUsersProps : RProps {
     var title: String
 }
 
-fun RBuilder.appTableUsers(handler: AppAllUsersProps.() -> Unit) = child(appAllUsers) {
+fun RBuilder.appAllUsers(handler: AppAllUsersProps.() -> Unit) = child(appAllUsers) {
     attrs {
         handler()
     }

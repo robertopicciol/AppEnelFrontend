@@ -3,7 +3,7 @@ import apps.appLogin.appLogin
 import kotlinx.browser.document
 import kotlinx.browser.window
 import model.AppRoute
-import model.TokenBo
+import model.Token
 import react.*
 import react.dom.*
 import react.router.dom.*
@@ -11,22 +11,26 @@ import react.router.dom.*
 object UrlRestApi {
     const val urlToken = "http://localhost:8080/appEnel/login"
     const val urlRegister = "http://localhost:8080/appEnel/registerUser"
+    const val urlRegCurveChartInfo ="\"http://localhost:8080/appEnel/appChartRegCurveInfo"
+    const val urlRegCurveChartData ="\"http://localhost:8080/appEnel/appChartRegCurveData"
 }
 
 object RouterApp {
    val routers = listOf(
        AppRoute("appHome", "appHome","Dashboard", "fas fa-tachometer-alt", "Home", true),
        AppRoute("appUsers", "appUsers","Users", "fas fa-tachometer-alt", "Users", false),
+       AppRoute("appRegisterUser", "appRegisterUser","Register User", "fas fa-tachometer-alt", "Register User", false),
        AppRoute("appSqlScriptOracle", "appSqlScriptOracle","Oracle Script", "fas fa-user", "Oracle Call Procedure", false),
        AppRoute("appConfigSqlScriptOracle", "appConfigSqlScriptOracle","Config Oracle Script", "fas fa-user", "Config Oracle Call Procedure", false),
-       AppRoute("appAnalisiTisDp", "appAnalisiTisDp","Analisi Tis DP", "fas fa-user", "Analisi Tis Dp", false)
+       AppRoute("appAnalisiTisDp", "appAnalisiTisDp","Analisi Tis DP", "fas fa-user", "Analisi Tis Dp", false),
+       AppRoute("appCheckExaRegCurve", "appCheckExaRegCurve","Chart Reg Curve", "fas fa-tachometer-alt", "Chart Reg Curve", true)
    )
 }
 
 
 //val contextUser = createContext(UserApp("Pippo"))
 
-val contextToken = createContext(TokenBo.newEmptyToken())
+val contextToken = createContext(Token.newEmptyToken())
 
 fun main() {
     window.onload = {
@@ -42,7 +46,7 @@ private fun RBuilder.startApp() = child(startApp) {
 
 private val startApp =  functionalComponent<RProps> {
     contextToken.Provider {
-        attrs.value = TokenBo.newEmptyToken()
+        attrs.value = Token.newEmptyToken()
         mainRouter{
             routers = RouterApp.routers
         }

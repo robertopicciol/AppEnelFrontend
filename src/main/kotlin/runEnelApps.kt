@@ -1,4 +1,6 @@
-import apps.appManageUsers.appTableUsers
+import apps.appCheckExaRegCurve.appCheckExaRegCurve
+import apps.appManageUsers.appAllUsers
+import apps.appManageUsers.appRegisterUser
 import apps.appScriptRunOracle.appConfigSqlScriptOracle
 import apps.appScriptRunOracle.appSqlScriptOracle
 import apps.home.appHome
@@ -47,11 +49,33 @@ private val runEnelApps =  functionalComponent<RunEnelAppsProps> { props ->
         }
 
         switch {
-            route("${match.path}/appUsers") {appTableUsers{title = "USERS"}}
-            route("${match.path}/appSqlScriptOracle") {appSqlScriptOracle{title = "ORACLE SCRIPT"}}
-            route("${match.path}/appConfigSqlScriptOracle") {appConfigSqlScriptOracle{title = "CONFIG ORACLE SCRIPT"}}
-            route("${match.path}/appHome") {appHome{title= "HOME"}}
-            route("*") {redirect(to="${match.path}/appHome")}
+            route("${match.path}/appUsers") {
+                console.log("IN USERS ")
+                appAllUsers { title = "USERS"
+                } }
+            route("${match.path}/appRegisterUser") {
+                console.log("IN REGISTER USER ")
+                appRegisterUser { title = "REGISTER USER"
+                } }
+            route("${match.path}/appSqlScriptOracle") {
+                console.log("ORACLE SCRIPT " )
+                appSqlScriptOracle{title = "ORACLE SCRIPT"}}
+            route("${match.path}/appConfigSqlScriptOracle") {
+                console.log("CONFIG ORACLE SCRIPT " )
+                appConfigSqlScriptOracle{title = "CONFIG ORACLE SCRIPT"}}
+
+            route("${match.path}/appCheckExaRegCurve") {
+                console.log("CHART " )
+                appCheckExaRegCurve{title= "Check Reg Curve"}}
+            route("${match.path}/appAnalisiTisDp") {
+                console.log("TIS DP " )
+                appCheckExaRegCurve{title= "TIS DP"}}
+            route("${match.path}/appHome") {
+                console.log("IN HOME " )
+                appHome{title= "HOME"}}
+            route("*") {
+                console.log("NULLA ")
+                redirect(to="${match.path}/appHome")}
         }
     }
 }
