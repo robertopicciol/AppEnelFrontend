@@ -1,3 +1,4 @@
+import apps.appAnalisiTisDp.appAnalisiTisDp
 import apps.appCheckExaRegCurve.appCheckExaRegCurve
 import apps.appManageUsers.appAllUsers
 import apps.appManageUsers.appRegisterUser
@@ -69,7 +70,7 @@ private val runEnelApps =  functionalComponent<RunEnelAppsProps> { props ->
                 appCheckExaRegCurve{title= "Check Reg Curve"}}
             route("${match.path}/appAnalisiTisDp") {
                 console.log("TIS DP " )
-                appCheckExaRegCurve{title= "TIS DP"}}
+                appAnalisiTisDp{title= "TIS DP"}}
             route("${match.path}/appHome") {
                 console.log("IN HOME " )
                 appHome{title= "HOME"}}

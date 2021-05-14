@@ -20,7 +20,7 @@ external val CartesianGrid: RClass<CartesianGridProps>
 external val XAxis: RClass<XAxisProps>
 
 @JsName("YAxis")
-external val YAxis: RClass<RProps>
+external val YAxis: RClass<YAxisProps>
 
 @JsName("Tooltip")
 external val Tooltip: RClass<RProps>

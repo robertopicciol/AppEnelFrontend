@@ -120,13 +120,12 @@ private val appLogin =  functionalComponent<RProps> {
                 //delay(5000)
                 try {
                     val resptoken = fetchToken(UserLogin(loginusername, loginemail, loginpassword))
-                    setAwaitLogin(false)
+
                     console.log("AAAAA result " + resptoken.result)
                     if (resptoken.result == "KO") {
                         setLoginErrorInput(resptoken.message)
                     } else {
                         token.setToken(resptoken.item)
-
                         if (token.token != null) {
                             history.push( "/appEnel/apps")
                         } else {
@@ -135,9 +134,9 @@ private val appLogin =  functionalComponent<RProps> {
                     }
                 } catch (e: Throwable) {
                     console.log("CCCC TOKEN " + e.message.toString())
-                    setAwaitLogin(false)
                     setLoginErrorInput( e.message.toString())
                 }
+                setAwaitLogin(false)
             }
             Unit
         }

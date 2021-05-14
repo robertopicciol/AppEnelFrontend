@@ -2,7 +2,6 @@ package apps.utility.reactChart
 
 import org.w3c.dom.events.Event
 import react.RProps
-import react.ReactElement
 
 data class Data(val name : String, val uv : Double, val pv : Double, val amt : Double)
 

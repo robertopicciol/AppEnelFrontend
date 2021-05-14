@@ -11,8 +11,11 @@ import react.router.dom.*
 object UrlRestApi {
     const val urlToken = "http://localhost:8080/appEnel/login"
     const val urlRegister = "http://localhost:8080/appEnel/registerUser"
-    const val urlRegCurveChartInfo ="\"http://localhost:8080/appEnel/appChartRegCurveInfo"
-    const val urlRegCurveChartData ="\"http://localhost:8080/appEnel/appChartRegCurveData"
+    const val urlRegCurveChartInfo = "http://localhost:8080/appEnel/appChartRegCurveInfo"
+    const val urlRegCurveChartData = "http://localhost:8080/appEnel/appChartRegCurveData"
+    const val urlAnalisiTisDpChartInfo = "http://localhost:8080/appAnalisiTisInfo"
+    const val urlAnalisiTisDpAnnoMeseChartData = "http://localhost:8080/appEnel/appAnalisiTisAnnoMeseData"
+    const val urlAnalisiTisDpAnnoChartData = "http://localhost:8080/appEnel/appAnalisiTisAnnoData"
 }
 
 object RouterApp {

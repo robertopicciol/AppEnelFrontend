@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="AppEnelFrontend-1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/build/libs</output-path>
+    <output-path>D:\DEVELOPMENT\09PROJECTS_ROBY66ONE\WEBAPP\KTOR\ENEL\APPENEL_REACTJS\APPENELBACKENDFRONTEND\AppEnelFrontend\build\libs</output-path>
     <root id="archive" name="AppEnelFrontend-1.0-SNAPSHOT.jar">
       <element id="module-output" name="AppEnelFrontend.main" />
     </root>
