@@ -1,25 +1,19 @@
 package apps.appAnalisiTisDp
 
-import apps.appCheckExaRegCurve.chartRegCurvee
-import apps.appCheckExaRegCurve.fetchData
-import apps.appCheckExaRegCurve.model.CheckRegCurvePost
-import apps.appCheckExaRegCurve.model.InfoChartCheckRegCurve
-import apps.appCheckExaRegCurve.model.RegCurvaChart
+import apps.appAnalisiTisDp.model.AnalysisTisDp
+import apps.appAnalisiTisDp.model.AnalysisTisDpYearPost
+import apps.appAnalisiTisDp.model.AnalysisTisDpInfo
 import apps.utility.spinnerComponent
 import headerfotterAppComponent.fotterapp
 import headerfotterAppComponent.headerapp
-import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
-import kotlinx.dom.addClass
-import kotlinx.html.InputType
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.role
 import model.RespondItem
-import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import org.w3c.fetch.RequestInit
@@ -28,26 +22,25 @@ import react.dom.*
 import kotlin.js.json
 
 
-external interface AppAnalisiTisDpProps : RProps {
+external interface AppAnalysisTisDpProps : RProps {
     var title: String
 }
 
-fun RBuilder.appAnalisiTisDp(handler: AppAnalisiTisDpProps.() -> Unit) = child(appAnalisiTisDp) {
+fun RBuilder.appAnalysisTisDp(handler: AppAnalysisTisDpProps.() -> Unit) = child(appAnalysisTisDp) {
     attrs {
         handler()
     }
 }
 
-suspend fun fetchInfo() : RespondItem<Array<InfoChartCheckRegCurve>> {
+suspend fun fetchInfo() : RespondItem<Array<AnalysisTisDpInfo>> {
     try {
         console.log("GET INFO ")
-        val response  = window.fetch(UrlRestApi.urlRegCurveChartInfo, object: RequestInit {
+        val response  = window.fetch(UrlRestApi.urlAnalysisTisDpChartInfo, object: RequestInit {
             override var method: String? = "GET"
-            //override var body: dynamic = user.getJson()//JSON.stringify(user)
             override var credentials = "same-origin".asDynamic()
             override var headers: dynamic = json("Content-Type" to "application/json") //json("Accept" to "application/json","Content-Type" to "application/json")
         }).await()
-        val info = response.json().await().unsafeCast<RespondItem<Array<InfoChartCheckRegCurve>>>()
+        val info = response.json().await().unsafeCast<RespondItem<Array<AnalysisTisDpInfo>>>()
         console.log(info)
         return if (response.ok){
             info
@@ -59,80 +52,78 @@ suspend fun fetchInfo() : RespondItem<Array<InfoChartCheckRegCurve>> {
 
 }
 
-suspend fun fetchAnnoMeseData(type : String, annomese : Long) : RespondItem<Array<RegCurvaChart>> {
+
+suspend fun fetchData(type : String, yearMonthAnalysis : Int) : RespondItem<AnalysisTisDp> {
     try {
         console.log("GET INFO ")
-        console.log(CheckRegCurvePost(type,annomese).getJson())
-        val response  = window.fetch(UrlRestApi.urlRegCurveChartData, object: RequestInit {
+        console.log(AnalysisTisDpYearPost(type,yearMonthAnalysis).getJson())
+        val response  = window.fetch(UrlRestApi.urlAnalysisTisDpChartData, object: RequestInit {
             override var method: String? = "POST"
-            override var body: dynamic = CheckRegCurvePost(type,annomese).getJson()//JSON.stringify(user)
+            override var body: dynamic = AnalysisTisDpYearPost(type,yearMonthAnalysis).getJson()//JSON.stringify(user)
             override var credentials = "same-origin".asDynamic()
             override var headers: dynamic = json("Content-Type" to "application/json") //json("Accept" to "application/json","Content-Type" to "application/json")
         }).await()
-        val info = response.json().await().unsafeCast<RespondItem<Array<RegCurvaChart>>>()
+        val info = response.json().await().unsafeCast<RespondItem<AnalysisTisDp>>()
         console.log(info)
         return if (response.ok){
             info
-        } else RespondItem("KO", response.statusText, emptyArray())
+        } else RespondItem("KO", response.statusText, AnalysisTisDp.newEmptyAnalisiTisDp(type,yearMonthAnalysis))
     } catch(e:Throwable){
         console.log(e.message.toString())
-        return RespondItem("KO", "SERVER PROBLEMS", emptyArray())
-    }
-}
-
-suspend fun fetchAnnoData(type : String, annomese : Long) : RespondItem<Array<RegCurvaChart>> {
-    try {
-        console.log("GET INFO ")
-        console.log(CheckRegCurvePost(type,annomese).getJson())
-        val response  = window.fetch(UrlRestApi.urlRegCurveChartData, object: RequestInit {
-            override var method: String? = "POST"
-            override var body: dynamic = CheckRegCurvePost(type,annomese).getJson()//JSON.stringify(user)
-            override var credentials = "same-origin".asDynamic()
-            override var headers: dynamic = json("Content-Type" to "application/json") //json("Accept" to "application/json","Content-Type" to "application/json")
-        }).await()
-        val info = response.json().await().unsafeCast<RespondItem<Array<RegCurvaChart>>>()
-        console.log(info)
-        return if (response.ok){
-            info
-        } else RespondItem("KO", response.statusText, emptyArray())
-    } catch(e:Throwable){
-        console.log(e.message.toString())
-        return RespondItem("KO", "SERVER PROBLEMS", emptyArray())
+        return RespondItem("KO", "SERVER PROBLEMS", AnalysisTisDp.newEmptyAnalisiTisDp(type,yearMonthAnalysis))
     }
 }
 
 
-private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props ->
-    val (infoCharts, setInfoCharts) = useState(emptyArray<InfoChartCheckRegCurve>())
-    val (infoChart, setInfoChart) = useState(InfoChartCheckRegCurve.newEmptyRegCurveChartInfo())
+private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { props ->
+    val (infoCharts, setInfoCharts) = useState(emptyArray<AnalysisTisDpInfo>())
+    val (infoChart, setInfoChart) = useState(AnalysisTisDpInfo.newEmptyAnalisiTisDpInfo())
     val (awaitInfo,setAwaitInfo) = useState(true)
     val (errorInputInfo, setErrorInputInfo) = useState("")
     val (type,setType) = useState("")
-    val (stateChart, setStateChart) = useState("")
-    val (yearMonthInsChart, setYearMonthInsChart) = useState(0L)
+    val (yearMonthAnalysisChart, setYearMonthAnalysisChart) = useState(0)
+    val (voltageTisChart, setVoltageTisChart) = useState("ERR")
+    val (towardsEnergyTisChart,setTowardsEnergyTisChart) = useState("ERR")
+    val (yearTisChart, setYearTisChart) = useState(0)
+    val (yearMonthArrayTisDp, setYearMonthArrayTisDp) = useState(emptyArray<Int>())
+    val (yearMonthTisChart, setYearMonthTisChart) = useState(0)
+
 
     val (awaitData,setAwaitData) = useState(true)
     val (errorInputData, setErrorInputData) = useState("")
-    val (dataChart, SetDataChart) = useState(emptyArray<RegCurvaChart>())
+    val (dataChart, SetDataChart) = useState( AnalysisTisDp.newEmptyAnalisiTisDp(null,null))
 
     useEffect(emptyList()) {
         val mainScope = MainScope()
         mainScope.launch {
             try {
-                val respinfo = apps.appCheckExaRegCurve.fetchInfo()
+                val respinfo = fetchInfo()
                 if (respinfo.result == "KO") {
                     setErrorInputInfo(respinfo.message)
                 } else {
                     if (respinfo.item.isNotEmpty()) {
                         setInfoCharts(respinfo.item)
+                        console.log(respinfo.item)
                         setInfoChart(respinfo.item.first())
+                        console.log(respinfo.item.first())
                         setType(respinfo.item.first().type ?: "ERR")
-                        setStateChart("ALL")
-                        setYearMonthInsChart(respinfo.item.first().maxAnnomeseIns ?: 0L)
+                        setYearMonthAnalysisChart(respinfo.item.first().yearMonthAnalysis.sortedArrayDescending().first())
+                        setYearTisChart(respinfo.item.first().yearRif.first())
+                        console.log(respinfo.item.first().yearRif.first())
+                        console.log(respinfo.item.first())
+
+                        val yearMonths = (respinfo.item.first().yearRif.first() * 100 + 1 .. respinfo.item.first().yearRif.first() * 100 + 12)
+                            .filter { it <= respinfo.item.first().maxYearMonthRif ?: 0 }.toTypedArray()
+
+                        setYearMonthArrayTisDp(yearMonths)
+                        setYearMonthTisChart(yearMonths.first())
+                        setVoltageTisChart(respinfo.item.first().voltage.first())
+                        setTowardsEnergyTisChart(respinfo.item.first().towardsEnergy.first())
+                        console.log("DATIIIIII")
                         try {
                             val respData = fetchData(
                                 respinfo.item.first().type ?: "ERR",
-                                respinfo.item.first().maxAnnomeseIns ?: 0L
+                                respinfo.item.first().yearMonthAnalysis.sortedArrayDescending().first()
                             )
                             console.log("DATIIIIII")
                             console.log(respData)
@@ -166,13 +157,11 @@ private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props
         val target = event.target as HTMLSelectElement
         val info = infoCharts.first { info -> info.type == target.value }
         setType(info.type ?: "ERR")
-        setStateChart("ALL")
-        setYearMonthInsChart(info.maxAnnomeseIns ?: 0L)
         setInfoChart(info)
         setAwaitData(true)
         mainScope.launch {
             try {
-                val respData = fetchData(info.type ?: "ERR", info.maxAnnomeseIns ?: 0L)
+                val respData = fetchData(info.type ?: "ERR", infoChart.yearMonthAnalysis.first())
                 console.log("DATIIIIII")
                 console.log(respData)
                 if (respData.result == "KO"){
@@ -190,16 +179,16 @@ private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props
 
     }
 
-    val handleChangeAnniMeseIns = { event: Event ->
+    val handleChangeYearMonthAnalysis = { event: Event ->
         val mainScope = MainScope()
         val target = event.target as HTMLSelectElement
-        val annomese = target.value.unsafeCast<Long>()
-        setYearMonthInsChart(annomese)
+        val yearMonth = target.value.unsafeCast<Int>()
+        setYearMonthAnalysisChart(yearMonth)
 
         setAwaitData(true)
         mainScope.launch {
             try {
-                val respData = fetchData(type, annomese)
+                val respData = fetchData(type, yearMonth)
                 if (respData.result == "KO"){
                     setErrorInputData(respData.message)
                 } else {
@@ -250,10 +239,10 @@ private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props
                                     }
                                     div("card-body") {
                                         div("row"){
-                                            div("col-md-4 text-nowrap") {
+                                            div("col-md-3 text-nowrap") {
                                                 div("row") {
                                                     label {
-                                                        +"Type:  "
+                                                        +"Type: "
                                                         select("form-control form-control-sm custom-select custom-select-sm") {
                                                             attrs.id = "selectType"
                                                             attrs.disabled = awaitInfo
@@ -274,26 +263,21 @@ private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props
                                                 }
                                             }
 
-                                            div("col-md-4 text-nowrap"){
+                                            div("col-md-3 text-nowrap"){
                                                 div("row") {
                                                     label {
-                                                        +"State:  "
+                                                        +"Month Analysis: "
                                                         select("form-control form-control-sm custom-select custom-select-sm") {
-                                                            attrs.id = "selectState"
-                                                            attrs.value = stateChart
+                                                            attrs.id = "selectYearMonthAnalysis"
+                                                            attrs.value = yearMonthAnalysisChart.toString()
                                                             attrs.onChangeFunction = { event ->
-                                                                val target = event.target as HTMLSelectElement
-                                                                setStateChart(target.value)
+                                                                handleChangeYearMonthAnalysis(event)
                                                             }
 
-                                                            option {
-                                                                attrs.value = "ALL"
-                                                                +"ALL"
-                                                            }
-                                                            infoChart.stati.forEach { stato ->
+                                                            infoChart.yearMonthAnalysis.forEach { yearMonth ->
                                                                 option {
-                                                                    attrs.value = stato
-                                                                    +stato
+                                                                    attrs.value = yearMonth.toString()
+                                                                    +yearMonth.toString()
                                                                 }
                                                             }
                                                         }
@@ -301,21 +285,45 @@ private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props
                                                 }
 
                                             }
-
-                                            div("col-md-4 text-nowrap"){
+                                            div("col-md-3 text-nowrap"){
                                                 div("row") {
                                                     label {
-                                                        +"Date Ins:  "
+                                                        +"Voltage: "
                                                         select("form-control form-control-sm custom-select custom-select-sm") {
-                                                            attrs.id = "selectYearMonthIns"
-                                                            attrs.value = yearMonthInsChart.toString()
+                                                            attrs.id = "selectVoltageTisChart"
+                                                            attrs.value = voltageTisChart
                                                             attrs.onChangeFunction = { event ->
-                                                                handleChangeAnniMeseIns(event)
+                                                                val target = event.target as HTMLSelectElement
+                                                                setVoltageTisChart(target.value)
                                                             }
-                                                            infoChart.yearMonth.forEach { yearMonth ->
+
+                                                            infoChart.voltage.forEach { voltage ->
                                                                 option {
-                                                                    attrs.value = yearMonth.toString()
-                                                                    +yearMonth.toString()
+                                                                    attrs.value = voltage
+                                                                    +voltage
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                            div("col-md-3 text-nowrap"){
+                                                div("row") {
+                                                    label {
+                                                        +"Towards Energy: "
+                                                        select("form-control form-control-sm custom-select custom-select-sm") {
+                                                            attrs.id = "selectTowardsEnergyTisChart"
+                                                            attrs.value = towardsEnergyTisChart
+                                                            attrs.onChangeFunction = { event ->
+                                                                val target = event.target as HTMLSelectElement
+                                                                setTowardsEnergyTisChart(target.value)
+                                                            }
+
+                                                            infoChart.towardsEnergy.forEach { towardsEnergy ->
+                                                                option {
+                                                                    attrs.value = towardsEnergy
+                                                                    +towardsEnergy
                                                                 }
                                                             }
                                                         }
@@ -327,6 +335,79 @@ private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props
 
                                     }
                                 }
+
+                                div("card shadow") {
+                                    div("card-header py-3") {
+                                        div("row") {
+                                            div("col-md-6 text-nowrap") {
+                                                div("row") {
+                                                    label {
+                                                        +"Year Tis: "
+                                                        select("form-control form-control-sm custom-select custom-select-sm") {
+                                                            attrs.id = "selectYearTisChart"
+                                                            attrs.value = yearTisChart.toString()
+                                                            attrs.onChangeFunction = { event ->
+                                                                val target = event.target as HTMLSelectElement
+                                                                val year = target.value.unsafeCast<Int>()
+                                                                setYearTisChart(target.value.unsafeCast<Int>())
+                                                                val yearMonths = (year * 100 + 1 .. year * 100 + 12)
+                                                                    .filter { it <= infoChart.maxYearMonthRif ?: 0 }.toTypedArray()
+                                                                setYearMonthArrayTisDp(yearMonths)
+                                                                setYearMonthTisChart(yearMonths.first())
+                                                            }
+
+                                                            infoChart.yearRif.forEach { year ->
+                                                                option {
+                                                                    attrs.value = year.toString()
+                                                                    +year.toString()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            div("col-md-6 text-nowrap") {
+                                                 div("row") {
+                                                     label {
+                                                         +"Year Month Tis: "
+                                                         select("form-control form-control-sm custom-select custom-select-sm") {
+                                                             attrs.id = "selectYearMonthTisChart"
+                                                             attrs.value = yearMonthTisChart.toString()
+                                                             attrs.onChangeFunction = { event ->
+                                                                 val target = event.target as HTMLSelectElement
+                                                                 setYearMonthTisChart(target.value.unsafeCast<Int>())
+                                                             }
+
+                                                             yearMonthArrayTisDp.forEach { monthRif ->
+                                                                 option {
+                                                                     attrs.value = monthRif.toString()
+                                                                     +monthRif.toString()
+                                                                 }
+                                                             }
+                                                         }
+                                                     }
+                                                 }
+                                             }
+                                        }
+                                    }
+                                    /*div("card-body") {
+                                        div("row") {
+                                            div("col-md-12 text-nowrap") {
+                                                chartRegCurvee{
+                                                    typeChart = type
+                                                    statoChart = stateChart
+                                                    data = dataChart
+                                                }
+                                            }
+
+                                        }
+
+                                    }*/
+                                }
+
+
+                                /*
+
                                 if (awaitData){
                                     div("col-md-6 text-nowrap") {
                                         spinnerComponent()
@@ -372,7 +453,7 @@ private val appAnalisiTisDp =  functionalComponent<AppAnalisiTisDpProps> { props
                                             }
                                         }
                                     }
-                                }
+                                }*/
                             }
                         }
 

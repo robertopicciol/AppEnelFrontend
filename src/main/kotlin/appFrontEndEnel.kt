@@ -13,9 +13,8 @@ object UrlRestApi {
     const val urlRegister = "http://localhost:8080/appEnel/registerUser"
     const val urlRegCurveChartInfo = "http://localhost:8080/appEnel/appChartRegCurveInfo"
     const val urlRegCurveChartData = "http://localhost:8080/appEnel/appChartRegCurveData"
-    const val urlAnalisiTisDpChartInfo = "http://localhost:8080/appAnalisiTisInfo"
-    const val urlAnalisiTisDpAnnoMeseChartData = "http://localhost:8080/appEnel/appAnalisiTisAnnoMeseData"
-    const val urlAnalisiTisDpAnnoChartData = "http://localhost:8080/appEnel/appAnalisiTisAnnoData"
+    const val urlAnalysisTisDpChartInfo = "http://localhost:8080/appEnel/appAnalysisTisInfo"
+    const val urlAnalysisTisDpChartData = "http://localhost:8080/appEnel/appAnalysisTisData"
 }
 
 object RouterApp {
@@ -25,7 +24,7 @@ object RouterApp {
        AppRoute("appRegisterUser", "appRegisterUser","Register User", "fas fa-tachometer-alt", "Register User", false),
        AppRoute("appSqlScriptOracle", "appSqlScriptOracle","Oracle Script", "fas fa-user", "Oracle Call Procedure", false),
        AppRoute("appConfigSqlScriptOracle", "appConfigSqlScriptOracle","Config Oracle Script", "fas fa-user", "Config Oracle Call Procedure", false),
-       AppRoute("appAnalisiTisDp", "appAnalisiTisDp","Analisi Tis DP", "fas fa-user", "Analisi Tis Dp", false),
+       AppRoute("appAnalysisTisDp", "appAnalysisTisDp","Analysis Tis DP", "fas fa-user", "Analysis Tis Dp", false),
        AppRoute("appCheckExaRegCurve", "appCheckExaRegCurve","Chart Reg Curve", "fas fa-tachometer-alt", "Chart Reg Curve", true)
    )
 }

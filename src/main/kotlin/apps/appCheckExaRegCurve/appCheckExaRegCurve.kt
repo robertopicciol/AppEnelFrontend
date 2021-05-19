@@ -53,7 +53,7 @@ suspend fun fetchInfo() : RespondItem<Array<InfoChartCheckRegCurve>> {
 
 }
 
-suspend fun fetchData(type : String, annomese : Long) : RespondItem<Array<RegCurvaChart>> {
+suspend fun fetchData(type : String, annomese : Int) : RespondItem<Array<RegCurvaChart>> {
     try {
         console.log("GET INFO ")
         console.log(CheckRegCurvePost(type,annomese).getJson())
@@ -81,7 +81,7 @@ private val appCheckExaRegCurve =  functionalComponent<AppCheckExaRegCurveProps>
     val (errorInputInfo, setErrorInputInfo) = useState("")
     val (type,setType) = useState("")
     val (stateChart, setStateChart) = useState("")
-    val (yearMonthInsChart, setYearMonthInsChart) = useState(0L)
+    val (yearMonthInsChart, setYearMonthInsChart) = useState(0)
 
     val (awaitData,setAwaitData) = useState(true)
     val (errorInputData, setErrorInputData) = useState("")
@@ -100,11 +100,11 @@ private val appCheckExaRegCurve =  functionalComponent<AppCheckExaRegCurveProps>
                         setInfoChart(respinfo.item.first())
                         setType(respinfo.item.first().type ?: "ERR")
                         setStateChart("ALL")
-                        setYearMonthInsChart(respinfo.item.first().maxAnnomeseIns ?: 0L)
+                        setYearMonthInsChart(respinfo.item.first().maxAnnomeseIns ?: 0)
                         try {
                             val respData = fetchData(
                                 respinfo.item.first().type ?: "ERR",
-                                respinfo.item.first().maxAnnomeseIns ?: 0L
+                                respinfo.item.first().maxAnnomeseIns ?: 0
                             )
                             console.log("DATIIIIII")
                             console.log(respData)
@@ -139,12 +139,12 @@ private val appCheckExaRegCurve =  functionalComponent<AppCheckExaRegCurveProps>
         val info = infoCharts.first { info -> info.type == target.value }
         setType(info.type ?: "ERR")
         setStateChart("ALL")
-        setYearMonthInsChart(info.maxAnnomeseIns ?: 0L)
+        setYearMonthInsChart(info.maxAnnomeseIns ?: 0)
         setInfoChart(info)
         setAwaitData(true)
         mainScope.launch {
             try {
-                val respData = fetchData(info.type ?: "ERR", info.maxAnnomeseIns ?: 0L)
+                val respData = fetchData(info.type ?: "ERR", info.maxAnnomeseIns ?: 0)
                 console.log("DATIIIIII")
                 console.log(respData)
                 if (respData.result == "KO"){
@@ -165,7 +165,7 @@ private val appCheckExaRegCurve =  functionalComponent<AppCheckExaRegCurveProps>
     val handleChangeAnniMeseIns = { event: Event ->
         val mainScope = MainScope()
         val target = event.target as HTMLSelectElement
-        val annomese = target.value.unsafeCast<Long>()
+        val annomese = target.value.unsafeCast<Int>()
         setYearMonthInsChart(annomese)
 
         setAwaitData(true)
