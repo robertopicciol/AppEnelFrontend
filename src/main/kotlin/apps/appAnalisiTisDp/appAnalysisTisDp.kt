@@ -55,8 +55,6 @@ suspend fun fetchInfo() : RespondItem<Array<AnalysisTisDpInfo>> {
 
 suspend fun fetchData(type : String, yearMonthAnalysis : Int) : RespondItem<AnalysisTisDp> {
     try {
-        console.log("GET INFO ")
-        console.log(AnalysisTisDpYearPost(type,yearMonthAnalysis).getJson())
         val response  = window.fetch(UrlRestApi.urlAnalysisTisDpChartData, object: RequestInit {
             override var method: String? = "POST"
             override var body: dynamic = AnalysisTisDpYearPost(type,yearMonthAnalysis).getJson()//JSON.stringify(user)
@@ -103,14 +101,11 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                 } else {
                     if (respinfo.item.isNotEmpty()) {
                         setInfoCharts(respinfo.item)
-                        console.log(respinfo.item)
                         setInfoChart(respinfo.item.first())
-                        console.log(respinfo.item.first())
                         setType(respinfo.item.first().type ?: "ERR")
                         setYearMonthAnalysisChart(respinfo.item.first().yearMonthAnalysis.sortedArrayDescending().first())
                         setYearTisChart(respinfo.item.first().yearRif.first())
-                        console.log(respinfo.item.first().yearRif.first())
-                        console.log(respinfo.item.first())
+
 
                         val yearMonths = (respinfo.item.first().yearRif.first() * 100 + 1 .. respinfo.item.first().yearRif.first() * 100 + 12)
                             .filter { it <= respinfo.item.first().maxYearMonthRif ?: 0 }.toTypedArray()
@@ -119,15 +114,11 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                         setYearMonthTisChart(yearMonths.first())
                         setVoltageTisChart(respinfo.item.first().voltage.first())
                         setTowardsEnergyTisChart(respinfo.item.first().towardsEnergy.first())
-                        console.log("DATIIIIII")
                         try {
                             val respData = fetchData(
                                 respinfo.item.first().type ?: "ERR",
                                 respinfo.item.first().yearMonthAnalysis.sortedArrayDescending().first()
                             )
-                            console.log("DATIIIIII")
-                            console.log(respData)
-                            console.log(respData.message)
                             if (respData.result == "KO") {
                                 setErrorInputData(respData.message)
                             } else {
@@ -162,19 +153,16 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
         mainScope.launch {
             try {
                 val respData = fetchData(info.type ?: "ERR", infoChart.yearMonthAnalysis.first())
-                console.log("DATIIIIII")
-                console.log(respData)
                 if (respData.result == "KO"){
                     setErrorInputData(respData.message)
                 } else {
                     SetDataChart(respData.item)
                 }
-                setAwaitData(false)
             } catch (e: Throwable) {
                 console.log("ERROR DATA CHART " + e.message.toString())
                 setErrorInputData( e.message.toString())
-
             }
+            setAwaitData(false)
         }
 
     }
@@ -194,12 +182,12 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                 } else {
                     SetDataChart(respData.item)
                 }
-                setAwaitData(false)
             } catch (e: Throwable) {
                 console.log("ERROR DATA CHART " + e.message.toString())
                 setErrorInputData( e.message.toString())
 
             }
+            setAwaitData(false)
         }
 
     }
@@ -245,7 +233,7 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                                                         +"Type: "
                                                         select("form-control form-control-sm custom-select custom-select-sm") {
                                                             attrs.id = "selectType"
-                                                            attrs.disabled = awaitInfo
+                                                            attrs.disabled = awaitInfo or awaitData
                                                             attrs.value = type
                                                             attrs.onChangeFunction = { event ->
                                                                 handleChangeType(event)
@@ -269,6 +257,7 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                                                         +"Month Analysis: "
                                                         select("form-control form-control-sm custom-select custom-select-sm") {
                                                             attrs.id = "selectYearMonthAnalysis"
+                                                            attrs.disabled = awaitInfo or awaitData
                                                             attrs.value = yearMonthAnalysisChart.toString()
                                                             attrs.onChangeFunction = { event ->
                                                                 handleChangeYearMonthAnalysis(event)
@@ -291,6 +280,7 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                                                         +"Voltage: "
                                                         select("form-control form-control-sm custom-select custom-select-sm") {
                                                             attrs.id = "selectVoltageTisChart"
+                                                            attrs.disabled = awaitInfo or awaitData
                                                             attrs.value = voltageTisChart
                                                             attrs.onChangeFunction = { event ->
                                                                 val target = event.target as HTMLSelectElement
@@ -314,6 +304,7 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                                                         +"Towards Energy: "
                                                         select("form-control form-control-sm custom-select custom-select-sm") {
                                                             attrs.id = "selectTowardsEnergyTisChart"
+                                                            attrs.disabled = awaitInfo or awaitData
                                                             attrs.value = towardsEnergyTisChart
                                                             attrs.onChangeFunction = { event ->
                                                                 val target = event.target as HTMLSelectElement
@@ -336,77 +327,6 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                                     }
                                 }
 
-                                div("card shadow") {
-                                    div("card-header py-3") {
-                                        div("row") {
-                                            div("col-md-6 text-nowrap") {
-                                                div("row") {
-                                                    label {
-                                                        +"Year Tis: "
-                                                        select("form-control form-control-sm custom-select custom-select-sm") {
-                                                            attrs.id = "selectYearTisChart"
-                                                            attrs.value = yearTisChart.toString()
-                                                            attrs.onChangeFunction = { event ->
-                                                                val target = event.target as HTMLSelectElement
-                                                                val year = target.value.unsafeCast<Int>()
-                                                                setYearTisChart(target.value.unsafeCast<Int>())
-                                                                val yearMonths = (year * 100 + 1 .. year * 100 + 12)
-                                                                    .filter { it <= infoChart.maxYearMonthRif ?: 0 }.toTypedArray()
-                                                                setYearMonthArrayTisDp(yearMonths)
-                                                                setYearMonthTisChart(yearMonths.first())
-                                                            }
-
-                                                            infoChart.yearRif.forEach { year ->
-                                                                option {
-                                                                    attrs.value = year.toString()
-                                                                    +year.toString()
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            div("col-md-6 text-nowrap") {
-                                                 div("row") {
-                                                     label {
-                                                         +"Year Month Tis: "
-                                                         select("form-control form-control-sm custom-select custom-select-sm") {
-                                                             attrs.id = "selectYearMonthTisChart"
-                                                             attrs.value = yearMonthTisChart.toString()
-                                                             attrs.onChangeFunction = { event ->
-                                                                 val target = event.target as HTMLSelectElement
-                                                                 setYearMonthTisChart(target.value.unsafeCast<Int>())
-                                                             }
-
-                                                             yearMonthArrayTisDp.forEach { monthRif ->
-                                                                 option {
-                                                                     attrs.value = monthRif.toString()
-                                                                     +monthRif.toString()
-                                                                 }
-                                                             }
-                                                         }
-                                                     }
-                                                 }
-                                             }
-                                        }
-                                    }
-                                    /*div("card-body") {
-                                        div("row") {
-                                            div("col-md-12 text-nowrap") {
-                                                chartRegCurvee{
-                                                    typeChart = type
-                                                    statoChart = stateChart
-                                                    data = dataChart
-                                                }
-                                            }
-
-                                        }
-
-                                    }*/
-                                }
-
-
-                                /*
 
                                 if (awaitData){
                                     div("col-md-6 text-nowrap") {
@@ -420,40 +340,138 @@ private val appAnalysisTisDp =  functionalComponent<AppAnalysisTisDpProps> { pro
                                             +errorInputData
                                         }
                                     } else {
-                                        if (dataChart.isEmpty()) {
-                                            console.log("EMPTY DATA")
-                                            div(classes = "alert alert-danger") {
-                                                attrs.role = "alert"
-                                                +"Nessun Dato per le scete fatte"
-                                            }
-                                        } else {
-                                            console.log("OK DATA")
-                                            console.log(dataChart)
-                                            console.log(type)
-                                            console.log(stateChart)
-                                            div("card shadow") {
-                                                div("card-header py-3") {
-                                                    p("text-primary m-0 font-weight-bold") {
-                                                        +"CHART"
-                                                    }
+                                        div("card shadow") {
+                                            div("card-header py-3") {
+                                                p("text-primary m-0 font-weight-bold") {
+                                                    +"CHART"
                                                 }
-                                                div("card-body") {
-                                                    div("row") {
-                                                        div("col-md-12 text-nowrap") {
-                                                            chartRegCurvee{
-                                                                typeChart = type
-                                                                statoChart = stateChart
-                                                                data = dataChart
+                                            }
+                                            div("card-body") {
+                                                div("row") {
+                                                    div("col-md-6 text-nowrap") {
+                                                        div("card shadow") {
+                                                            div("card-header py-3") {
+                                                                div("row") {
+                                                                    label {
+                                                                        +"Year Tis: "
+                                                                        select("form-control form-control-sm custom-select custom-select-sm") {
+                                                                            attrs.id = "selectYearTisChart"
+                                                                            attrs.value = yearTisChart.toString()
+                                                                            attrs.disabled = awaitInfo or awaitData
+                                                                            attrs.onChangeFunction = { event ->
+                                                                                val target =
+                                                                                    event.target as HTMLSelectElement
+                                                                                val year =
+                                                                                    target.value.unsafeCast<Int>()
+                                                                                setYearTisChart(target.value.unsafeCast<Int>())
+                                                                                val yearMonths =
+                                                                                    (year * 100 + 1..year * 100 + 12)
+                                                                                        .filter { it <= infoChart.maxYearMonthRif ?: 0 }
+                                                                                        .toTypedArray()
+                                                                                setYearMonthArrayTisDp(yearMonths)
+                                                                                setYearMonthTisChart(yearMonths.first())
+                                                                            }
+
+                                                                            infoChart.yearRif.forEach { year ->
+                                                                                option {
+                                                                                    attrs.value = year.toString()
+                                                                                    +year.toString()
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            div("card-body") {
+                                                                val dataIn = dataChart.year
+                                                                             .filter { tis -> tis.yearRif == yearTisChart && tis.voltage == voltageTisChart && tis.towardsEnergy == towardsEnergyTisChart}.toTypedArray()
+
+                                                                console.log("YEAR $yearTisChart")
+                                                                console.log("VOLTAGE $voltageTisChart")
+                                                                console.log("TOWARDSENRGY $towardsEnergyTisChart")
+                                                                console.log("DATA:")
+                                                                console.log(dataIn)
+                                                                console.log(dataChart)
+
+                                                                if (dataIn.isNotEmpty()) {
+                                                                    chartAnalisiTisDp {
+                                                                        typeChart = type
+                                                                        voltageTis = voltageTisChart
+                                                                        towardsEnergyTis = towardsEnergyTisChart
+                                                                        data = dataIn
+                                                                    }
+                                                                } else {
+                                                                    label{
+                                                                        +"NO DATA"
+                                                                    }
+                                                                }
                                                             }
                                                         }
 
                                                     }
+                                                    div("col-md-6 text-nowrap") {
+                                                        div("card shadow") {
+                                                            div("card-header py-3") {
+                                                                div("row") {
+                                                                    label {
+                                                                        +"Year Month Tis: "
+                                                                        select("form-control form-control-sm custom-select custom-select-sm") {
+                                                                            attrs.id = "selectYearMonthTisChart"
+                                                                            attrs.disabled = awaitInfo or awaitData
+                                                                            attrs.value = yearMonthTisChart.toString()
+                                                                            attrs.onChangeFunction = { event ->
+                                                                                val target = event.target as HTMLSelectElement
+                                                                                setYearMonthTisChart(target.value.toInt())
+                                                                            }
 
+                                                                            yearMonthArrayTisDp.forEach { monthRif ->
+                                                                                option {
+                                                                                    attrs.value = monthRif.toString()
+                                                                                    +monthRif.toString()
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            div("card-body") {
+                                                                val dataIn = dataChart.yearMonth.filter { analysis -> analysis.yearRif * 100 + analysis.monthRif == yearMonthTisChart
+                                                                        && analysis.voltage ==voltageTisChart && analysis.towardsEnergy == towardsEnergyTisChart}.toTypedArray()
+
+                                                                console.log("YEARMONTH $yearMonthTisChart")
+                                                                console.log("VOLTAGE $voltageTisChart")
+                                                                console.log("TOWARDSENRGY $towardsEnergyTisChart")
+                                                                console.log("DATA:")
+                                                                console.log(dataIn)
+                                                                console.log(dataChart)
+
+                                                                if (dataIn.isNotEmpty()) {
+                                                                    chartAnalisiTisDp{
+                                                                        typeChart = type
+                                                                        voltageTis = voltageTisChart
+                                                                        towardsEnergyTis = towardsEnergyTisChart
+                                                                        data = dataIn
+                                                                    }
+                                                                } else {
+                                                                    label{
+                                                                        +"NO DATA"
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        }
+
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-                                }*/
+                                }
+
+
+
+
+
                             }
                         }
 
