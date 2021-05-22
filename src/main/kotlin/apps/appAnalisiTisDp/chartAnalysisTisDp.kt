@@ -8,7 +8,6 @@ import react.dom.label
 
 external interface ChartAnalisiTisDpProps : RProps {
     var typeChart : String
-    var yearMonthRif : Int
     var voltageTis : String
     var towardsEnergyTis : String
     var data : Array<AnalysisYearMonthRifTisDp>
@@ -34,11 +33,9 @@ private val chartAnalisiTisDp =  functionalComponent<ChartAnalisiTisDpProps>{ pr
 
         div("row") {
             console.log("3 IN CHART")
-            if (props.yearMonthRif > 0) {
-                label { +"TYPE: ${props.typeChart} YEARMONTHRIF: ${props.yearMonthRif}  VOLTAGE: ${props.voltageTis} TOWARDSENERGY: ${props.towardsEnergyTis}" }
-            } else {
-                label { +"TYPE: ${props.typeChart}  VOLTAGE: ${props.voltageTis} TOWARDSENERGY: ${props.towardsEnergyTis}" }
-            }
+
+            label { +"TYPE: ${props.typeChart}  VOLTAGE: ${props.voltageTis} TOWARDSENERGY: ${props.towardsEnergyTis}" }
+
             ResponsiveContainer {
                 attrs.width = 600
                 attrs.height = 400
